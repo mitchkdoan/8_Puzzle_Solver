@@ -9,13 +9,62 @@ CS 170 Project 1 (8 puzzle solver)
 
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <string>
 
 using namespace std;
 
+priority_queue <Node, vector<Node>, compare_nodes> frontier;
+vector<Node> explored;
+
+MATRIX goal_matrix() {
+	vector<int> v;
+	for(int i = 1; i < 9; ++i) {
+		v.push_back(i);
+	}
+	v.push_back(0);
+
+	MATRIX matrix = create_matrix(v);
+
+	return matrix;
+}
+
+void search(MATRIX init_state) {
+	//goal matrix which will be used to compare current state to goal state
+	MATRIX goal = goal_matrix();
+
+	//initial node
+	Node *init_node = new Node(init_state, 0, 0);
+
+	frontier.push(*init_node);
+
+	while(1) {
+		if(frontier.empty()) {
+			cout << "failed" << endl;
+			return;
+		}
+		else{
+			Node temp = frontier.top();
+			frontier.pop();
+			Node *to_explore = &temp;
+
+			//bool compare = compare_matrices(to_explore->matrix, goal);
+			if(to_explore->matrix == goal) {
+				cout << "success!" << endl;
+				return;
+			}
+			else {
+				explored.push_back(*to_explore);
+				expand(explored, frontier, to_explore);
+			}
+		}
+	}
+}
+
 int main() {
 	string input;
-	vector<int> v = {1,2,3,0,4,5,6,7,8};
+	string algorithm;
+	vector<int> v = {1,2,3,4,8,0,7,6,5};
 
 
 	cout << "Welcome to 862022288 8 Puzzle Solver." << endl;
@@ -54,19 +103,20 @@ int main() {
     //Choose Algorithm		
 	while(1) {
 		cout << "Enter your choice of algorithm\n1 Uniform Cost Search\n2 A* with the Misplaced Tile heuristic.\n3 A* with the Eucledian distance heuristic." << endl;
-		cin >> input;
+		cin >> algorithm;
 
-		if(input == "1") {
+		if(algorithm == "1") {
 			cout << "Uniform Cost Search" << endl;
+			search(matrix);
 			break;
 		}
 
-		else if(input == "2") {
+		else if(algorithm == "2") {
 			cout << "A* with Misplaced Tile heuristic" << endl;
 			break;
 		}
 
-		else if(input == "3") {
+		else if(algorithm == "3") {
 			cout << "A* with Euclidian distacnce heuristic" << endl;
 			break;
 		}

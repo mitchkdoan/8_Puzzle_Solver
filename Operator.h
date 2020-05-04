@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -16,5 +17,7 @@ MATRIX up(MATRIX m);
 MATRIX down(MATRIX m);
 void print_matrix(const MATRIX m);
 MATRIX create_matrix(const vector<int> v);
+//bool compare_matrices(const MATRIX m, const MATRIX goal_matrix);
+int expand(const vector<Node> explored, priority_queue<Node, vector<Node>, compare_nodes> &frontier, Node *parent);
 
 #endif

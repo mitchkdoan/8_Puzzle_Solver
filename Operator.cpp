@@ -84,3 +84,63 @@ MATRIX create_matrix(const vector<int> v) {
 
 	return matrix;
 }
+
+// bool compare_matrices(const MATRIX m, const MATRIX goal_matrix) {
+// 	for (int i = 0; i < MATRIX_SIZE; ++i) {
+// 		for (int j = 0; j < MATRIX_SIZE; ++j) {
+// 			if((m.at(i).at(j)) != (goal_matrix.at(i).at(j))) {
+// 				return false;
+// 			}
+// 		}
+// 	}
+// 	return true;
+// }
+
+int expand(const vector<Node> explored, priority_queue<Node, vector<Node>, compare_nodes> &frontier, Node *parent) {
+	// print_matrix(parent->matrix);
+	// cout << "----------" << endl;
+
+	int row = 0;
+	int column = 0;
+	vector<Node *> children;
+
+	find(parent->matrix, row, column);
+	
+	if(column != 0) {
+		//cout << "left" << endl;
+		Node *left_child = new Node(left(parent->matrix), parent->g_n + 1, 0);
+		children.push_back(left_child);
+	}
+	if(column != 2) {
+		//cout << "right" << endl;
+		Node *right_child = new Node(right(parent->matrix), parent->g_n + 1, 0);
+		children.push_back(right_child);
+	}
+	if(row != 0) {
+		//cout << "up" << endl;
+		Node *up_child = new Node(up(parent->matrix), parent->g_n + 1, 0);
+		children.push_back(up_child);
+	}
+	if(row != 2) {
+		//cout << "down" << endl;
+		Node *down_child = new Node(down(parent->matrix), parent->g_n + 1, 0);
+		children.push_back(down_child);
+	}
+
+	for(int i = 0; i < explored.size(); ++i) {
+		for(int j = 0; j < children.size(); ++j) {
+			if(((children.at(j))->matrix) == ((explored.at(i)).matrix)) {
+				children.erase(children.begin() + j);
+				//cout << "here" << endl;
+			}
+		}
+	}
+
+	for(int i = 0; i < children.size(); ++i) {
+		// print_matrix(children.at(i)->matrix);
+		// cout << "---------------" << endl;
+		frontier.push(*(children.at(i)));
+	}
+
+	return children.size();
+}

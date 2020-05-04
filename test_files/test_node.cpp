@@ -16,9 +16,9 @@ int main() {
 	MATRIX m3 = create_matrix(v3);
 
 	//create nodes
-	Node *grandpa = new Node(m1);
-	Node *dad = new Node(m2);
-	Node *son = new Node(m3);
+	Node *grandpa = new Node(m1, 0, 0);
+	Node *dad = new Node(m2, 0, 0);
+	Node *son = new Node(m3, 0, 0);
 
 	dad->parent = grandpa;
 	son->parent = dad;
