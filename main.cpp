@@ -5,7 +5,6 @@ SID:	862022288
 CS 170 Project 1 (8 puzzle solver)
 */
 #include "Node.h"
-//#include "Operator.cpp"
 #include "Heuristic.cpp"
 
 #include <iostream>
@@ -39,16 +38,25 @@ MATRIX goal_matrix() {
 
 //differs from print_matrix: doesnt print "Expanding"
 void display_matrix(const MATRIX matrix) {
+	int row;
+	int col;
+	find(matrix, row, col, 0);
+
 	for (int i = 0; i < matrix.size(); i++) { 
         for (int j = 0; j < matrix[i].size(); j++) {
-            cout << matrix[i][j] << " "; 
-        }
-    	cout  << endl;
+        	if((i == row) && (j == col)) {
+        		cout << 'b' << " ";
+        	}
+            else {
+            	cout << matrix[i][j] << " "; 
+        	}
+    	}
+        cout << endl;
 	}
 }
 
 //output success messages;
-void print_success() {
+void success_message() {
 	cout << "GOAL!!!\n\n";
 	cout << "To solve this problem, the search algorithm expanded a total of " << explored.size() << " nodes." << endl;
 	cout << "The maximum number of nodes in the queue at any one time: " << frontier_max << endl;
@@ -56,10 +64,11 @@ void print_success() {
 }
 
 void load_stack() {
-	Node curr = frontier.top();
-	while(curr.parent != 0) {
-		s.push(curr.matrix);
-		curr = *curr.parent;
+	Node *curr = new Node(frontier.top());
+
+	while(curr != 0) {
+		s.push(curr->matrix);
+		curr = curr->parent;
 	}
 }
 
@@ -169,6 +178,9 @@ void search(const MATRIX init_state, const string algorithm) {
 
 	cout << "Expanding State" << endl;
 	print_matrix(init_node->matrix);
+	frontier.pop();
+	explored.push_back(*init_node);
+	expand(init_node, algorithm, goal);
 
 	while(1) {
 		if(frontier.empty()) {
@@ -179,13 +191,9 @@ void search(const MATRIX init_state, const string algorithm) {
 			if(frontier.size() > frontier_max) {
 				frontier_max = frontier.size();
 			}
-			Node temp = frontier.top();
-			//cout << temp.g_n << endl;
-			//cout << temp.parent->g_n;
-			Node *to_explore = &temp;
-
+			Node *to_explore = new Node(frontier.top());
 			if(to_explore->matrix == goal) {
-				print_success();
+				success_message();
 				load_stack();
 				return;
 			}
@@ -201,13 +209,14 @@ void search(const MATRIX init_state, const string algorithm) {
 }
 
 void trace_back(){
-	cout << "Initial Matrix: " << endl;
+	cout << "\nTracing Back:\n\nInitial Matrix:" << endl;
 	while(!(s.empty())) {
 		display_matrix(s.top());
 		cout << endl;
 		s.pop();
 	}
-	cout << "Final Matrix" << endl;
+	cout << "Trace back complete\n" << endl;
+	return;
 }
 
 int main() {
@@ -307,12 +316,12 @@ int main() {
 		}
 	}
 
-	// cout << "\nInput 1 to view trace back, any other key to exit: " << endl;
-	// cin >> input;
+	cout << "\nInput 1 to view trace back, any other key to exit: " << endl;
+	cin >> input;
 
-	// if(input == "1") {
-	// 	trace_back();
-	// }
+	if(input == "1") {
+		trace_back();
+	}
 
 	return 0;
 }

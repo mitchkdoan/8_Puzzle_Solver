@@ -42,6 +42,8 @@ int calculate_euclidean(const MATRIX m, const MATRIX n) {
 				temp2 = sqrt((temp1 + temp2));
 				//cout << temp2 << endl;
 				total += temp2;
+
+				total = round(total);
 			}
 		}
 	}

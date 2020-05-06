@@ -66,9 +66,18 @@ MATRIX down(MATRIX m) {
 
 //prints matrix. customized for ui
 void print_matrix(const MATRIX m) {
+	int row; 
+	int col;
+	find(m, row, col, 0);
+
 	for (int i = 0; i < m.size(); i++) { 
         for (int j = 0; j < m[i].size(); j++) {
-            cout << m[i][j] << " "; 
+        	if((i == row) && (j == col)) {
+        		cout << 'b' << " ";
+        	}
+        	else {
+            	cout << m[i][j] << " "; 
+            }
         }
         if(i == m.size() - 1) {
         	cout << "\tExpanding...\n"; 
