@@ -12,14 +12,13 @@ typedef vector<vector<int> > MATRIX;
 struct Node {
 		//variables
 		MATRIX matrix;
-		Node *parent;
-		int g_n;
-		int h_n;
-		int f_n;
+		Node *parent = NULL;
+		int g_n;	//cost to get from initial node to current node
+		int h_n;	//heuristic 
+		int f_n;	//g_n + h_n
 
-		//fucnctions
+		//Constructor
 		Node(MATRIX m, int g, int h) {
-			parent = 0;
 			matrix = m;
 			g_n = g;
 			h_n = h;
@@ -27,6 +26,7 @@ struct Node {
 		}
 };
 
+//Used to order priority in priority queue
 struct compare_nodes {  
 	bool operator()(const Node &ln, const Node &rn) {  
 		return ln.f_n > rn.f_n;  
