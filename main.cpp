@@ -63,9 +63,7 @@ void success_message() {
 	return;
 }
 
-void load_stack() {
-	Node *curr = new Node(frontier.top());
-
+void load_stack(Node* curr) {
 	while(curr != 0) {
 		s.push(curr->matrix);
 		curr = curr->parent;
@@ -171,10 +169,21 @@ void search(const MATRIX init_state, const string algorithm) {
 	//goal matrix which will be used to compare current state to goal state
 	MATRIX goal = goal_matrix();
 
+	//used when solution is found but still searching for better solution
+	Node* solution = 0;
+	bool found = false;
+
 	//initial node
 	Node *init_node = new Node(init_state, 0, 0);
 
 	frontier.push(*init_node);
+	frontier_max++;
+
+	if(init_state == goal) {
+		success_message();
+		load_stack(init_node);
+		return;
+	}
 
 	cout << "Expanding State" << endl;
 	print_matrix(init_node->matrix);
@@ -184,38 +193,65 @@ void search(const MATRIX init_state, const string algorithm) {
 
 	while(1) {
 		if(frontier.empty()) {
-			cout << "\nProgram Failed" << endl;
-			return;
+			if(solution == 0){
+				cout << "\nNo solution" << endl;
+				return;
+			}
+
+			else {
+				success_message();
+				load_stack(solution);
+				return;
+			}
 		}
+
 		else{
 			if(frontier.size() > frontier_max) {
 				frontier_max = frontier.size();
 			}
-			Node *to_explore = new Node(frontier.top());
+
+			Node* to_explore = new Node(frontier.top());
+			frontier.pop();
+			explored.push_back(*to_explore);
+
 			if(to_explore->matrix == goal) {
-				success_message();
-				load_stack();
-				return;
+				if(algorithm == "1") {
+					success_message();
+					load_stack(to_explore);
+					return;
+				}
+				else if(solution == 0) {
+					found = true;
+					solution = to_explore;
+				}
+				else {
+					if((to_explore->g_n) < (solution->g_n)){
+						solution = to_explore;
+					}
+				}
 			}
+
 			else {
-				frontier.pop();
-				explored.push_back(*to_explore);
-				cout << "The best state to expand with g(n) = " << to_explore->g_n << " and h(n) = " << to_explore->h_n << " is..." << endl;
-				print_matrix(to_explore->matrix);
-				expand(to_explore, algorithm, goal);
+				if(found == false) {
+					cout << "The best state to expand with g(n) = " << to_explore->g_n << " and h(n) = " << to_explore->h_n << " is..." << endl;
+					print_matrix(to_explore->matrix);
+					expand(to_explore, algorithm, goal);
+				}
 			}
 		}
 	}
 }
 
 void trace_back(){
+	int moves = 0;
 	cout << "\nTracing Back:\n\nInitial Matrix:" << endl;
 	while(!(s.empty())) {
 		display_matrix(s.top());
 		cout << endl;
 		s.pop();
+		++moves;
 	}
-	cout << "Trace back complete\n" << endl;
+	cout << "Total of " << moves - 1 << " moves.\n\nTrace back complete.\n" << endl;
 	return;
 }
 
